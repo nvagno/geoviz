@@ -23,25 +23,22 @@ sidebar = st.sidebar
 
 uploaded_file = sidebar.file_uploader("", type=['geojson', 'json'], width=500)
 
+m = folium.Map(zoom_start=20, control_scale=True, tiles='OpenStreetMap')
 
 if uploaded_file is not None:
     gdf = gpd.read_file(uploaded_file)
     show_polygons = sidebar.checkbox("Show polygons", value=False)
 
+    if gdf.crs != "EPSG:4326":
+        gdf = gdf.to_crs("EPSG:4326")
+
     if show_polygons:
         sidebar.write(gdf.head(100))
 
-    center = [gdf.geometry.centroid.y.mean(), gdf.geometry.centroid.x.mean()]
-    m = folium.Map(location=center, zoom_start=20, control_scale=True)
+    folium.GeoJson(gdf, name="JSON Features").add_to(m)
 
-    folium.GeoJson(
-        gdf,
-        name="Mes Données",
-        tooltip=folium.GeoJsonTooltip(fields=[gdf.columns[0]], aliases=["Nom :"]),
-        popup=folium.GeoJsonPopup(fields=list(gdf.columns[:-1]))
-    ).add_to(m)
-
+    bounds = gdf.total_bounds  # [minx, miny, maxx, maxy]
+    m.fit_bounds([[bounds[1], bounds[0]], [bounds[3], bounds[2]]])
     show_map(m)
 else:
-    m = folium.Map(location=[0, 0], zoom_start=3, control_scale=True)
     show_map(m)
