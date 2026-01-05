@@ -13,9 +13,10 @@ uploaded_file = sidebar.file_uploader("", type=['geojson', 'json'], width=500)
 
 if uploaded_file is not None:
     gdf = gpd.read_file(uploaded_file)
+    show_polygons = sidebar.checkbox("Show polygons", value=False)
 
-    if st.checkbox("Afficher les données du tableau"):
-        st.write(gdf.head())
+    if show_polygons:
+        sidebar.write(gdf.head(100))
 
     center = [gdf.geometry.centroid.y.mean(), gdf.geometry.centroid.x.mean()]
     m = folium.Map(location=center, zoom_start=10, control_scale=True)
