@@ -7,7 +7,9 @@ st.set_page_config(page_title="Geoviz", layout="wide")
 
 st.title("Geoviz")
 
-uploaded_file = st.sidebar.file_uploader("Choisir un fichier GeoJSON", type=['geojson', 'json'])
+sidebar = st.sidebar
+
+uploaded_file = sidebar.file_uploader("", type=['geojson', 'json'], width=500)
 
 if uploaded_file is not None:
     gdf = gpd.read_file(uploaded_file)
