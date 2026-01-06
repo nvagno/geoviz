@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 
+from map_utils import show_map
+
 
 @st.cache_data
 def _read_file(file):
@@ -49,36 +51,17 @@ def _read_file(file):
 
 
 def process_lidar(uploaded_file):
-    with st.spinner("Processing 3D Point Cloud..."):
-        df_lidar = _read_file(uploaded_file)
+    df_lidar = _read_file(uploaded_file)
 
-        map_layer = pdk.Layer(
-            "TileLayer",
-            data='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-            get_tile_data=None,
-            min_zoom=0,
-            max_zoom=19,
-        )
+    target_layer = pdk.Layer(
+        "PointCloudLayer",
+        df_lidar,
+        get_position="[lon, lat, elevation]",
+        get_color="[r, g, b, 200]",
+        point_size=3,
+    )
 
-        target_layer = pdk.Layer(
-            "PointCloudLayer",
-            df_lidar,
-            get_position="[lon, lat, elevation]",
-            get_color="[r, g, b, 200]",
-            point_size=3,
-        )
+    mean_lat = df_lidar['lat'].mean()
+    mean_lon = df_lidar['lon'].mean()
 
-        view_state = pdk.ViewState(
-            latitude=df_lidar['lat'].mean(),
-            longitude=df_lidar['lon'].mean(),
-            zoom=16,
-            pitch=45,
-            bearing=0,
-        )
-
-        st.pydeck_chart(pdk.Deck(
-            layers=[map_layer, target_layer],
-            initial_view_state=view_state,
-            height=900,
-            map_style=None
-        ), height=900)
+    show_map(target_layer, mean_lat, mean_lon)

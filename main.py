@@ -1,4 +1,3 @@
-import folium
 import streamlit as st
 
 from geojson_handler import process_geojson
@@ -15,8 +14,6 @@ footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
-
-m = folium.Map(zoom_start=20, control_scale=True, tiles="OpenStreetMap")
 _, uploaded_file = show_side_bar()
 
 if uploaded_file is not None:
@@ -24,8 +21,7 @@ if uploaded_file is not None:
 
     if file_name.endswith(('.las', '.laz')):
         process_lidar(uploaded_file)
-
     else:
-        process_geojson(m, uploaded_file)
+        process_geojson(uploaded_file)
 else:
-    show_map(m)
+    show_map(None)

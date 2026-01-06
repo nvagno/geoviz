@@ -1,23 +1,28 @@
-import folium
+import streamlit as st
 import geopandas as gpd
+import pydeck as pdk
 
 from map_utils import show_map
 
 
-def process_geojson(map, uploaded_file):
+def process_geojson(uploaded_file):
     gdf = gpd.read_file(uploaded_file)
-
     if gdf.crs != "EPSG:4326":
         gdf = gdf.to_crs("EPSG:4326")
 
-    folium.GeoJson(
-        gdf,
-        name="GeoJSON",
-        tooltip=folium.GeoJsonTooltip(
-            fields=[c for c in gdf.columns if c != "geometry"]
-        )
-    ).add_to(map)
+    center_lat = gdf.geometry.centroid.y.mean()
+    center_lon = gdf.geometry.centroid.x.mean()
 
-    bounds = gdf.total_bounds
-    map.fit_bounds([[bounds[1], bounds[0]], [bounds[3], bounds[2]]])
-    show_map(map)
+    geojson_layer = pdk.Layer(
+        "GeoJsonLayer",
+        gdf,
+        opacity=0.8,
+        stroked=True,
+        filled=True,
+        get_fill_color="[200, 30, 0, 160]",
+        get_line_color=[255, 255, 255],
+        line_width_min_pixels=1,
+        pickable=True,
+    )
+
+    show_map(geojson_layer, center_lat, center_lon)
