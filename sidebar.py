@@ -5,6 +5,6 @@ def show_side_bar():
 
     sidebar.image("logo.png")
 
-    uploaded_file = sidebar.file_uploader("", type=["geojson", "json"])
+    uploaded_file = sidebar.file_uploader("", type=["geojson", "json", "las", "laz"])
 
     return sidebar, uploaded_file
