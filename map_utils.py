@@ -11,4 +11,4 @@ def show_map(map):
         control=True
     ).add_to(map)
     folium.LayerControl(position='bottomright', collapsed=False).add_to(map)
-    st_folium(map, width=1000, height=850, use_container_width=True)
+    st_folium(map, width=1000, height=900, use_container_width=True)
