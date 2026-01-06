@@ -22,7 +22,7 @@ def _read_file(file):
     df['class_code'] = class_codes
 
     gdf = gpd.GeoDataFrame(
-        df, geometry=gpd.points_from_xy(df.x, df.y), crs="EPSG:32633"
+        df, geometry=gpd.points_from_xy(df.x, df.y), crs="EPSG:2154"
     )
     gdf = gdf.to_crs("EPSG:4326")
 
@@ -52,6 +52,14 @@ def process_lidar(uploaded_file):
     with st.spinner("Processing 3D Point Cloud..."):
         df_lidar = _read_file(uploaded_file)
 
+        map_layer = pdk.Layer(
+            "TileLayer",
+            data='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            get_tile_data=None,
+            min_zoom=0,
+            max_zoom=19,
+        )
+
         target_layer = pdk.Layer(
             "PointCloudLayer",
             df_lidar,
@@ -69,8 +77,8 @@ def process_lidar(uploaded_file):
         )
 
         st.pydeck_chart(pdk.Deck(
-            layers=[target_layer],
+            layers=[map_layer, target_layer],
             initial_view_state=view_state,
             height=900,
-            map_style="mapbox://styles/mapbox/satellite-v9"
+            map_style=None
         ), height=900)
