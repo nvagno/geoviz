@@ -2,3 +2,7 @@ streamlit
 folium
 geopandas
 streamlit-folium
+laspy
+open3d
+numpy
+laspy[lazrs]
