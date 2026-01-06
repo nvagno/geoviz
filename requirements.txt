@@ -1,8 +1,8 @@
-streamlit
-folium
-geopandas
-streamlit-folium
-laspy
-open3d
-numpy
-laspy[lazrs]
+streamlit==1.52.2
+folium==0.20.0
+geopandas==1.1.2
+streamlit-folium==0.25.3
+laspy==2.6.1
+open3d==0.19.0
+numpy==2.4.0
+lazrs==0.7.0
